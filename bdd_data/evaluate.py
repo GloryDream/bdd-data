@@ -13,9 +13,9 @@ from PIL import Image
 def parse_args():
     """Use argparse to get command line arguments."""
     parser = argparse.ArgumentParser()
-    parser.add_argument('task', choices=['seg', 'det', 'drivable'])
-    parser.add_argument('gt', help='path to ground truth')
-    parser.add_argument('result', help='path to results to be evaluated')
+    parser.add_argument('--task', choices=['seg', 'det', 'drivable'])
+    parser.add_argument('--gt', help='path to ground truth')
+    parser.add_argument('--result', help='path to results to be evaluated')
     args = parser.parse_args()
 
     return args
