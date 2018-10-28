@@ -185,8 +185,9 @@ def evaluate_detection(gt_path, result_path, name_list):
     gt = json.load(open(gt_path, 'r'))
     with open(name_list, 'rb') as f2:
         img_names = pickle.load(f2)
+    prefix = '100k/' + args.split + '/'
 
-    gt = [instance for instance in gt if '100k/' + args.split + '/' + instance['name'] in img_names]
+    gt = [instance for instance in gt if prefix + instance['name'] in img_names]
     pred = json.load(open(result_path, 'r'))
     print('len gt:', len(gt))
     print('len pred:', len(pred))
