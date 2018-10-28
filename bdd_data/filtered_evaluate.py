@@ -184,6 +184,8 @@ def evaluate_detection(gt_path, result_path, name_list):
 
     gt = [instance for instance in gt if '100k/val/' + instance['name'] in img_names]
     pred = json.load(open(result_path, 'r'))
+    print('len gt:', len(gt))
+    print('len pred:', len(pred))
     cat_gt = group_by_key(gt, 'category')
     cat_pred = group_by_key(pred, 'category')
     cat_list = sorted(cat_gt.keys())
