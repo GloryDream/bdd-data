@@ -181,10 +181,8 @@ def evaluate_detection(gt_path, result_path, name_list):
     gt = json.load(open(gt_path, 'r'))
     with open(name_list, 'rb') as f2:
         img_names = pickle.load(f2)
-    for idx, instance in enumerate(tqdm(gt)):
-        if '100k/val/' + instance['name'] not in img_names:
-            del gt[idx]
 
+    gt = [instance for instance in gt if '100k/val/' + instance['name'] in img_names]
     pred = json.load(open(result_path, 'r'))
     cat_gt = group_by_key(gt, 'category')
     cat_pred = group_by_key(pred, 'category')
