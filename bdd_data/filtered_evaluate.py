@@ -19,9 +19,13 @@ def parse_args():
     parser.add_argument('--task', choices=['seg', 'det', 'drivable'])
     parser.add_argument('--gt', help='path to ground truth')
     parser.add_argument('--result', help='path to results to be evaluated')
+    parser.add_argument('--split', help='the split of images')
     args = parser.parse_args()
 
     return args
+
+
+args = parse_args()
 
 
 def fast_hist(gt, prediction, n):
@@ -182,7 +186,7 @@ def evaluate_detection(gt_path, result_path, name_list):
     with open(name_list, 'rb') as f2:
         img_names = pickle.load(f2)
 
-    gt = [instance for instance in gt if '100k/val/' + instance['name'] in img_names]
+    gt = [instance for instance in gt if '100k/' + args.split + '/' + instance['name'] in img_names]
     pred = json.load(open(result_path, 'r'))
     print('len gt:', len(gt))
     print('len pred:', len(pred))
@@ -201,7 +205,6 @@ def evaluate_detection(gt_path, result_path, name_list):
 
 
 def main():
-    args = parse_args()
 
     if args.task == 'drivable':
         mean, breakdown = evaluate_drivable(args.gt, args.result)
