@@ -1,5 +1,6 @@
 import argparse
 import copy
+import pickle
 import json
 import os
 from collections import defaultdict
@@ -8,11 +9,13 @@ import os.path as osp
 
 import numpy as np
 from PIL import Image
+from tqdm import tqdm
 
 
 def parse_args():
     """Use argparse to get command line arguments."""
     parser = argparse.ArgumentParser()
+    parser.add_argument('name_list', type=str, help='path to the name list')
     parser.add_argument('task', choices=['seg', 'det', 'drivable'])
     parser.add_argument('gt', help='path to ground truth')
     parser.add_argument('result', help='path to results to be evaluated')
@@ -174,8 +177,14 @@ def cat_pc(gt, predictions, thresholds):
     return recalls, precisions, ap
 
 
-def evaluate_detection(gt_path, result_path):
+def evaluate_detection(gt_path, result_path, name_list):
     gt = json.load(open(gt_path, 'r'))
+    with open(name_list, 'rb') as f2:
+        img_names = pickle.load(f2)
+    for idx, instance in enumerate(tqdm(gt)):
+        if '100k/val/' + instance['name'] not in img_names:
+            del gt[idx]
+
     pred = json.load(open(result_path, 'r'))
     cat_gt = group_by_key(gt, 'category')
     cat_pred = group_by_key(pred, 'category')
@@ -199,7 +208,7 @@ def main():
     elif args.task == 'seg':
         mean, breakdown = evaluate_segmentation(args.gt, args.result, 19, 17)
     elif args.task == 'det':
-        mean, breakdown = evaluate_detection(args.gt, args.result)
+        mean, breakdown = evaluate_detection(args.gt, args.result, args.name_list)
 
     print('{:.2f}'.format(mean),
           ', '.join(['{:.2f}'.format(n) for n in breakdown]))
